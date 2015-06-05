@@ -1,3 +1,12 @@
+"""
+Created on Wed Apr 22 15:21:11 2015
+
+@author: rkp
+
+Code to compute spike-triggered average.
+
+translated to Julia by Robert Danitz 2015
+"""
 using PyPlot
 
 data = readcsv("c1p8.csv")
