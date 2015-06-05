@@ -7,7 +7,7 @@ R Rao 2007
 translated to Julia by Robert Danitz 2015
 """
 
-using PyPlot
+using Gadfly
 
 # input current
 I = 10 # nA
@@ -35,28 +35,23 @@ V = 0 # mV
 V_trace = [V] # mV
 
 for t in 0:h:tstop
-   # Euler method: V(t+h) = V(t) + h*dV/dt
-   V = V +h*(- (V/(R*C)) + (I/C))
+  # Euler method: V(t+h) = V(t) + h*dV/dt
+  V = V +h*(- (V/(R*C)) + (I/C))
 
-   # Verify membrane time constant
-   if (tau != 0 && (V > 0.6321*V_inf))
-     tau = t
-     println("tau = $tau ms")
-     println("(Experimental)")
-   end
-   
-   # Stop current injection 
-   if t >= 0.6*tstop
-     I = 0
-   end
+  # Verify membrane time constant
+  if (tau != 0 && (V > 0.6321*V_inf))
+    tau = t
+    println("tau = $tau ms")
+    println("(Experimental)")
+  end
+  
+  # Stop current injection 
+  if t >= 0.6*tstop
+    I = 0
+  end
 
-   V_trace = [V_trace,V]
-   if (t % 10 == 0)
-     plot(0:h:t+h, V_trace, color="r")
-     xlim(0, tstop)
-     ylim(0, V_inf)
-     draw()
-   end
+  V_trace = [V_trace,V]
 end
 
-show()
+set_default_plot_size(20cm, 15cm)
+plot(x=(0:h:tstop), y=V_trace, Geom.line)
