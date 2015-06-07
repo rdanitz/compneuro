@@ -9,12 +9,14 @@ translated to Julia by Robert Danitz 2015
 
 using Gadfly
 
+set_default_plot_size(20cm, 15cm)
+
 # input current
 I = 10 # nA
 
 # capacitance and leak resistance
 
-C = 0.1 # nF
+C = .1 # nF
 R = 100 # M ohms
 tau = R*C # = 0.1*100 nF-Mohms = 100*100 pF Mohms = 10 ms
 println("C = $C nF")
@@ -34,24 +36,23 @@ h = 0.2 # ms (step size)
 V = 0 # mV
 V_trace = [V] # mV
 
-for t in 0:h:tstop
+for t in h:h:tstop
   # Euler method: V(t+h) = V(t) + h*dV/dt
-  V = V +h*(- (V/(R*C)) + (I/C))
+  V = V + h*(-(V/(R*C)) + (I/C))
 
   # Verify membrane time constant
-  if (tau != 0 && (V > 0.6321*V_inf))
+  if (tau == 0 && V > 0.6321*V_inf)
     tau = t
     println("tau = $tau ms")
     println("(Experimental)")
   end
-  
+
   # Stop current injection 
-  if t >= 0.6*tstop
+  if (t >= 0.6*tstop)
     I = 0
   end
 
   V_trace = [V_trace,V]
 end
-
-set_default_plot_size(20cm, 15cm)
+  
 plot(x=(0:h:tstop), y=V_trace, Geom.line)
